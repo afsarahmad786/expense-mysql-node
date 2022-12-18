@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Expense Project</h1>
+    <form id="myForm" action="/expenses" method="POST">
+      <label>Choose Expense Amount</label>
+      <input type="number" name="exp" required id="exp" />
+      <label>Choose description</label>
+      <input type="text" name="des" required id="des" />
+      <label>Choose a categoty</label>
+      <input list="category" name="categ" id="categ" />
+      <datalist id="cat">
+        <option value="fuel"></option>
+        <option value="Movie"></option>
+        <option value="trip"></option>
+        <option value="food"></option>
+      </datalist>
+      <button>Add Expense</button>
+    </form>
+    <ul id="expens"></ul>
+    <ul id="listofusers"></ul>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        let initObject = {
+          method: "GET",
+        };
+        let result;
+        fetch("http://127.0.0.1:3000/expenses", initObject)
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            // result.push(data);
+            for (var i = 0; i < data.length; i++) {
+              showOutput(data[i]);
+            }
+          })
+          .catch(function (err) {
+            console.log("Something went wrong!", err);
+          });
+      });
+      function showOutput(user) {
+        const list = document.getElementById("listofusers");
+        let li = document.createElement("li");
+        let del = document.createElement("button");
+        del.setAttribute("id", `${user.id}`);
+        const id = `${user.id}`;
+        const exp = `${user.exp}`;
+        const des = `${user.des}`;
+        const categ = `${user.categ}`;
+
+        // let obj = {
+        //   id: id,
+        //   name: name,
+        //   phone: phone,
+        //   email: email,
+        // };
+        del.setAttribute("onclick", `delete1(id)`);
+        let edit = document.createElement("button");
+        edit.setAttribute("id", `${user._id}`);
+        edit.setAttribute("onclick", `edit1(id)`);
+
+        del.innerHTML = "delete";
+        edit.innerHTML = "Edit";
+        li.innerHTML = `${user.exp}- ${user.des} - ${user.categ}`;
+        list.appendChild(li);
+        list.appendChild(del);
+        list.appendChild(edit);
+      }
+      function delete1(id) {
+        let initObject = {
+          method: "DELETE",
+        };
+        let result;
+        fetch("http://127.0.0.1:3000/expenses/" + id, initObject)
+          .then(function (response) {
+            return response;
+          })
+          .then(function (data) {
+            // result.push(data);
+            console.log(data);
+          })
+          .catch(function (err) {
+            console.log("Something went wrong!", err);
+          });
+        console.log(id);
+        location.reload();
+      }
+      // console.log(result);
+    </script>
+  </body>
+</html>
